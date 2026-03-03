@@ -24,18 +24,15 @@ bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
 
 # Use pactl to adjust volume in PulseAudio.
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
-
-# Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+bindsym XF86AudioMute exec 	  --no-startup-id pactl set-sink-mute   @DEFAULT_SINK@ 	 toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMicMute exec 	  --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@   +10% && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ 	 -10% && pkill -RTMIN+1 i3blocks
 
 # kill focused window
 bindsym $mod+q kill
 bindsym $mod+Return exec kitty
-bindsym $alt+space exec rofi -show drun
+bindsym $mod+space exec rofi -show drun
 
 # change focus
 bindsym $mod+h focus left
@@ -73,19 +70,13 @@ bindsym $alt+s layout stacking
 bindsym $alt+w layout tabbed
 bindsym $alt+e layout toggle split
 
-# toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
-
-# change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
-
 #  ██  ██  
 # ████████ 
 #  ██  ██  
 # ████████ 
 #  ██  ██  
 # workspace
-workspace_layout tabbed
+#workspace_layout tabbed
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
@@ -165,24 +156,25 @@ bindsym $mod+r mode "resize"
 
 bar {
 	font pango: Noto Sans Regular 10
-	status_command i3blocks -c ~/.config/i3/i3blocks.conf
+	status_command i3blocks -c ~/.config/i3blocks/i3blocks.conf
 	position top
 	tray_padding 3
 
 	colors {
-		separator          #1a1a1a
-		background         #1A1A1A
-		statusline         #FFFFFF
-                          #border		#bg		    #txt		  #indicator
-    focused_workspace   	#FFFFFF	  #FFFFFF		#1A1A1A	  #0F111A 
-    active_workspace    	#ffffff		#ffffff		#0F111A		#0F111A 
-    inactive_workspace	  #1A1A1A		#1A1A1A		#ffffff		#1A1A1A 
+		separator		#1a1a1a
+		background         	#1A1A1A
+		statusline         	#FFFFFF
+
+                          		#border		#bg		#txt		#indicator
+		focused_workspace   	#FFFFFF		#FFFFFF		#1A1A1A		#0F111A 
+    		active_workspace    	#ffffff		#ffffff		#0F111A		#0F111A 
+    		inactive_workspace	#1A1A1A		#1A1A1A		#ffffff		#1A1A1A 
 	}
 }
 
-gaps inner 10
-gaps outer 5
-#smart_gaps on
+gaps inner 7
+gaps outer 3
+smart_gaps off
 smart_borders on
 
 ## i3 gaps change                   
@@ -230,13 +222,24 @@ mode "$mode_gaps_outer" {
 # ████████ 
 #  ██  ██  
 # Autostart & always start
-exec_always --no-startup-id fcitx -d
-exec_always --no-startup-id picom
-exec_always --no-startup-id nohup watch -n 60 nitrogen --set-zoom-fill --random ~/.config/i3/magallan --save > /dev/null 2>&1& 
+exec_always --no-startup-id picom --fade-in-step=1 --fade-out-step=1 --fade-delta=0
 exec_always --no-startup-id udiskie -2 -s &
-# Keybind using sxhkd
-exec_always --no-startup-id nohup sxhkd -c ~/.config/sxhkd/sxhkdrc > /dev/null 2>&1&
 exec --no-startup-id nm-applet
+
+#  ██  ██  
+# ████████ 
+#  ██  ██  
+# ████████ 
+#  ██  ██  
+# Floating
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $alt+space focus mode_toggle
 
 #  ██  ██  
 # ████████ 
@@ -246,7 +249,6 @@ exec --no-startup-id nm-applet
 # Window classes
 for_window [class="^.*"] border pixel 4
 for_window [class="mus"] floating enable
-for_window [class="Pavucontrol"] floating enable
 for_window [class="SimpleScreenRecorder"] floating enable
 for_window [class="Gpick"] floating enable
 for_window [class="Lxappearance"] floating enable
